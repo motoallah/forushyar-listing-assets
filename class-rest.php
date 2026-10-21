@@ -1338,33 +1338,25 @@ class REST {
 	 * @param string $session_key کلید سشن.
 	 * @return \WP_REST_Response
 	 */
-	private function handle_recommendation_query( $message, $session_key ) {
-		$user_id = get_current_user_id();
-		$tools   = array( array( 'name' => 'recommend_for_user', 'ok' => false ) );
-		if ( ! $user_id ) {
-			$reply = 'برای پیشنهاد مخصوص خودت، لطفاً اول وارد حساب کاربری‌ات شو 🙂';
-			$this->log_chat( $session_key, $message, $reply, $tools );
-			return rest_ensure_response( array( 'reply' => $reply, 'products' => array(), 'tools' => $tools ) );
-		}
+	/**
+	 * محصول‌های پیشنهادی برای کاربر — از دسته‌های خریدهای قبلی، به‌جز چیزی که خریده.
+	 * عمومی است تا داشبورد مشتری هم از همین منطق استفاده کند.
+	 *
+	 * @param int $user_id شناسه کاربر.
+	 * @return array آرایهٔ خلاصهٔ محصولات (summarize).
+	 */
+	public function get_recommended_products( $user_id ) {
 		$history = get_user_meta( $user_id, 'forushyar_ai_purchase_history', true );
+		$catalog = new CatalogReader();
 		if ( empty( $history ) || ! is_array( $history ) ) {
 			// بدون تاریخچه: پرفروش‌ترین‌ها.
-			$catalog  = new CatalogReader();
-			$products = array_slice( $catalog->search( '', array( 'limit' => 5 ) ), 0, 5 );
-			$reply    = 'هنوز خریدی ثبت نشده؛ این پرفروش‌ترین‌های فروشگاه‌اند:';
-			$tools[0]['ok'] = ! empty( $products );
-			$this->log_chat( $session_key, $message, $reply, $tools );
-			return rest_ensure_response( array( 'reply' => $reply, 'products' => $products, 'tools' => $tools ) );
+			return array_slice( $catalog->search( '', array( 'limit' => 5 ) ), 0, 5 );
 		}
 		$bought_ids = array();
 		$cat_ids    = array();
-		$names      = array();
 		foreach ( $history as $h ) {
 			if ( ! empty( $h['product_id'] ) ) {
 				$bought_ids[] = (int) $h['product_id'];
-			}
-			if ( ! empty( $h['product_name'] ) ) {
-				$names[] = $h['product_name'];
 			}
 			if ( ! empty( $h['categories'] ) && is_array( $h['categories'] ) ) {
 				$cat_ids = array_merge( $cat_ids, array_map( 'intval', $h['categories'] ) );
@@ -1372,11 +1364,9 @@ class REST {
 		}
 		$bought_ids = array_unique( $bought_ids );
 		$cat_ids    = array_unique( $cat_ids );
-		$names      = array_slice( array_unique( $names ), -3 );
 		$products   = array();
 		if ( ! empty( $cat_ids ) ) {
-			$catalog = new CatalogReader();
-			$seen    = array();
+			$seen = array();
 			// هر دستهٔ خرید قبلی جدا کوئری می‌شود تا همهٔ دسته‌ها پوشش داده شوند.
 			foreach ( $cat_ids as $cid ) {
 				$term = get_term( (int) $cid, 'product_cat' );
@@ -1396,6 +1386,33 @@ class REST {
 				}
 			}
 		}
+		return $products;
+	}
+
+	private function handle_recommendation_query( $message, $session_key ) {
+		$user_id = get_current_user_id();
+		$tools   = array( array( 'name' => 'recommend_for_user', 'ok' => false ) );
+		if ( ! $user_id ) {
+			$reply = 'برای پیشنهاد مخصوص خودت، لطفاً اول وارد حساب کاربری‌ات شو 🙂';
+			$this->log_chat( $session_key, $message, $reply, $tools );
+			return rest_ensure_response( array( 'reply' => $reply, 'products' => array(), 'tools' => $tools ) );
+		}
+		$history = get_user_meta( $user_id, 'forushyar_ai_purchase_history', true );
+		if ( empty( $history ) || ! is_array( $history ) ) {
+			$products = $this->get_recommended_products( $user_id );
+			$reply    = 'هنوز خریدی ثبت نشده؛ این پرفروش‌ترین‌های فروشگاه‌اند:';
+			$tools[0]['ok'] = ! empty( $products );
+			$this->log_chat( $session_key, $message, $reply, $tools );
+			return rest_ensure_response( array( 'reply' => $reply, 'products' => $products, 'tools' => $tools ) );
+		}
+		$names = array();
+		foreach ( $history as $h ) {
+			if ( ! empty( $h['product_name'] ) ) {
+				$names[] = $h['product_name'];
+			}
+		}
+		$names    = array_slice( array_unique( $names ), -3 );
+		$products = $this->get_recommended_products( $user_id );
 		if ( empty( $products ) ) {
 			$reply = 'بر اساس خریدهای قبلیت چیز تازه‌ای پیدا نکردم؛ بگو دنبال چه محصولی می‌گردی تا دقیق پیشنهاد بدم 🙂';
 		} else {

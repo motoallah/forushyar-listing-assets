@@ -1,0 +1,35 @@
+/* داشبورد مشتری «دستیار فروش هوشمند kavexiron» */
+.fy-dash { max-width: 960px; margin: 0 auto; direction: rtl; }
+.fy-dash-head h3 { margin: 0 0 4px; font-size: 22px; }
+.fy-dash-sub { color: #666; margin: 0 0 18px; }
+.fy-dash-sec { background: #fff; border: 1px solid #e8e8e8; border-radius: 12px; padding: 18px; margin-bottom: 18px; }
+.fy-dash-sec h4 { margin: 0 0 8px; font-size: 17px; }
+.fy-dash-note { color: #888; font-size: 13px; margin: 0 0 12px; }
+.fy-dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.fy-dash-grid-chat { margin-top: 10px; }
+.fy-dash-card { border: 1px solid #eee; border-radius: 10px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+.fy-dash-card-img img { width: 100%; height: 140px; object-fit: cover; display: block; }
+.fy-dash-card-body { padding: 10px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.fy-dash-card-name { font-size: 13.5px; font-weight: 600; color: #222; text-decoration: none; line-height: 1.6; }
+.fy-dash-card-name:hover { color: #b8860b; }
+.fy-dash-card-price { font-size: 14px; color: #c00; font-weight: 700; }
+.fy-dash-card-price del { color: #999; font-weight: 400; font-size: 12px; margin-inline-start: 6px; }
+.fy-dash-add { background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px; padding: 8px; font-size: 13px; cursor: pointer; transition: all .15s; }
+.fy-dash-add:hover:not(:disabled) { background: #111; color: #fff; border-color: #111; }
+.fy-dash-add:disabled { opacity: .65; cursor: default; }
+.fy-dash-search { display: flex; gap: 8px; margin-bottom: 12px; }
+.fy-dash-search input { flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+.fy-dash-search button { background: #111; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; cursor: pointer; font-size: 14px; }
+.fy-dash-chat { border: 1px solid #e8e8e8; border-radius: 10px; overflow: hidden; }
+.fy-dash-chat-log { height: 380px; overflow-y: auto; padding: 14px; background: #fafafa; display: flex; flex-direction: column; gap: 10px; }
+.fy-dash-msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.8; }
+.fy-dash-msg-user { align-self: flex-start; background: #111; color: #fff; border-bottom-right-radius: 4px; }
+.fy-dash-msg-assistant { align-self: flex-end; background: #fff; border: 1px solid #e8e8e8; border-bottom-left-radius: 4px; }
+.fy-dash-typing { color: #999; font-style: italic; }
+.fy-dash-chat-input { display: flex; gap: 8px; padding: 10px; background: #fff; border-top: 1px solid #e8e8e8; }
+.fy-dash-chat-input input { flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+.fy-dash-chat-input button { background: linear-gradient(135deg, #d4af37, #b8860b); color: #111; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-size: 14px; font-weight: 700; }
+@media (max-width: 600px) {
+	.fy-dash-grid { grid-template-columns: repeat(2, 1fr); }
+	.fy-dash-chat-log { height: 300px; }
+}
