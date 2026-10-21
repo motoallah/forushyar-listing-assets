@@ -74,15 +74,8 @@ class Customer_Dashboard {
 			array(),
 			$ver
 		);
-		wp_enqueue_script(
-			'forushyar-dashboard',
-			FORUSHYAR_AI_URL . 'assets/js/forushyar-dashboard.js',
-			array(),
-			$ver,
-			true
-		);
-		// نکته: کانفیگ به‌صورت inline در render() چاپ می‌شود (قابل‌اعتمادتر از
-		// wp_localize_script در صفحهٔ حساب کاربری).
+		// نکته: خودِ اسکریپت JS هم به‌صورت مستقیم در انتهای render() چاپ می‌شود؛
+		// شرط is_wc_endpoint_url در wp_enqueue_scripts قابل‌اعتماد نبود.
 	}
 
 	/**
@@ -123,7 +116,6 @@ class Customer_Dashboard {
 		$recs      = $rest->get_recommended_products( $user_id );
 		$has_hist  = $this->has_purchase_history( $user_id );
 		?>
-		<script>var forushyarDashboard = <?php echo wp_json_encode( $this->js_config() ); ?>;</script>
 		<div class="fy-dash">
 			<div class="fy-dash-head">
 				<h3><?php echo esc_html( sprintf( __( 'سلام %s! 👋', 'forushyar-ai' ), $hello ) ); ?></h3>
@@ -164,6 +156,8 @@ class Customer_Dashboard {
 				</div>
 			</section>
 		</div>
+		<script>var forushyarDashboard = <?php echo wp_json_encode( $this->js_config() ); ?>;</script>
+		<script src="<?php echo esc_url( FORUSHYAR_AI_URL . 'assets/js/forushyar-dashboard.js?ver=' . FORUSHYAR_AI_VERSION ); ?>"></script>
 		<?php
 	}
 
