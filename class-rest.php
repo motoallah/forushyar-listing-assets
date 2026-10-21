@@ -114,6 +114,83 @@ class REST {
 	 * @param string $message پیام کاربر.
 	 * @return bool
 	 */
+	private function is_recommendation_query( $message ) {
+		$msg = mb_strtolower( trim( (string) $message ) );
+		$msg = preg_replace( '/\s+/', ' ', $msg );
+		// ارجاع صریح به خریدهای قبلی.
+		foreach ( array( 'خریدهای قبلی', 'خرید قبلی', 'خریدهای من', 'قبلا خریدم', 'قبلاً خریدم' ) as $p ) {
+			if ( false !== mb_strpos( $msg, $p ) ) {
+				return true;
+			}
+		}
+		// درخواست پیشنهاد «خالی»: بعد از حذف واژه‌های پیشنهاد، چیزی نماند.
+		// («چی پیشنهاد می‌دی؟» → بله؛ «گوشی پیشنهاد بده» → نه، چون «گوشی» می‌ماند)
+		$bare = preg_replace( '/پیشنهاد|پیشنهادت|بده|بدید|بدم|می‌دی|میدی|چی|چه|چیز|بخرم|کن|کنید|لطفا|لطفاً|\?|؟/u', ' ', $msg );
+		$bare = trim( preg_replace( '/\s+/', ' ', $bare ) );
+		if ( mb_strlen( $bare ) < 2 && false !== mb_strpos( $msg, 'پیشنهاد' ) ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * تشخیص «سفارش‌های من / سفارش‌هایم».
+	 *
+	 * @param string $message پیام کاربر.
+	 * @return bool
+	 */
+	private function is_my_orders_query( $message ) {
+		$msg = mb_strtolower( trim( (string) $message ) );
+		foreach ( array( 'سفارش‌های من', 'سفارشهای من', 'سفارشات من', 'سفارش‌هایم', 'سفارشهایم', 'سفارشاتم' ) as $p ) {
+			if ( false !== mb_strpos( $msg, $p ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * فهرست سفارش‌های مشتری لاگین‌کرده — deterministic.
+	 *
+	 * @param string $message     پیام کاربر.
+	 * @param string $session_key کلید سشن.
+	 * @return \WP_REST_Response
+	 */
+	private function handle_my_orders_query( $message, $session_key ) {
+		$tools  = array( array( 'name' => 'my_orders', 'ok' => false ) );
+		$user_id = get_current_user_id();
+		if ( ! $user_id ) {
+			$reply = 'برای دیدن سفارش‌ها لطفاً اول وارد حساب کاربری‌ات شو 🙂';
+			$this->log_chat( $session_key, $message, $reply, $tools );
+			return rest_ensure_response( array( 'reply' => $reply, 'products' => array(), 'tools' => $tools ) );
+		}
+		if ( ! function_exists( 'wc_get_orders' ) ) {
+			$reply = 'متأسفانه در حال حاضر نمی‌تونم سفارش‌ها رو ببینم.';
+			$this->log_chat( $session_key, $message, $reply, $tools );
+			return rest_ensure_response( array( 'reply' => $reply, 'products' => array(), 'tools' => $tools ) );
+		}
+		$orders = wc_get_orders( array( 'customer_id' => $user_id, 'limit' => 5, 'orderby' => 'date', 'order' => 'DESC' ) );
+		if ( empty( $orders ) ) {
+			$reply = 'هنوز سفارشی ثبت نکردی 🙂 هر وقت خریدی انجام بدی، این‌جا می‌تونی پیگیریش کنی.';
+			$this->log_chat( $session_key, $message, $reply, $tools );
+			return rest_ensure_response( array( 'reply' => $reply, 'products' => array(), 'tools' => $tools ) );
+		}
+		$lines = array();
+		foreach ( $orders as $o ) {
+			$lines[] = '🧾 سفارش ' . $this->fa_digits( $o->get_order_number() )
+				. ' — ' . self::coarse_order_status( $o->get_status() )
+				. ' — ' . $this->fa_digits( number_format( (float) $o->get_total() ) ) . ' تومان';
+		}
+		$reply = "آخرین سفارش‌هات:\n" . implode( "\n", $lines );
+		$tools[0]['ok'] = true;
+		$this->log_chat( $session_key, $message, $reply, $tools );
+		return rest_ensure_response( array( 'reply' => $reply, 'products' => array(), 'tools' => $tools ) );
+	}
+
+	/**
+	 * @param string $message پیام کاربر.
+	 * @return bool
+	 */
 	private function is_cart_query( $message ) {
 		$patterns = array(
 			'سبد',
@@ -639,6 +716,13 @@ class REST {
 		if ( preg_match( '/(.)\1{6,}/u', $t ) ) {
 			return true;
 		}
+		// حروف‌سوخاری لاتین («asdfghj»): فقط لاتین، بدون فاصله، بدون هیچ مصوتی.
+		if ( preg_match( '/^[a-zA-Z]+$/', str_replace( ' ', '', $t ) ) ) {
+			$latin = strtolower( str_replace( ' ', '', $t ) );
+			if ( mb_strlen( $latin ) >= 4 && ! preg_match( '/[aeiou]/', $latin ) ) {
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -822,12 +906,11 @@ class REST {
 	 * @return string پاسخ (شاید با پیشنهاد پشتیبانی).
 	 */
 	private function failed_reply_offer( $session_key, $reply ) {
-		// «ناموفق» = جملهٔ ثابت قانون ۲۴ به‌تنهایی. اگر مدل طبق قانون ۲۶ بعد از
-		// جملهٔ ثابت، جایگزین و راهنمایی هم داده (پاسخ بلند)، پاسخ مفید بوده و
-		// نباید شمارندهٔ ناموفق را زیاد کند.
+		// «ناموفق» = هر پاسخی که جملهٔ ثابت قانون ۲۴ را دارد — حتی با جایگزین‌های
+		// قانون ۲۶. تجربه نشان داد جایگزین‌ها برای درخواست‌های واقعاً ناموجود
+		// کمکی نمی‌کنند و کاربر بدون مسیر فرار گیر می‌کند (باگ ۳).
 		$reply_str = (string) $reply;
-		$failed = false !== mb_strpos( $reply_str, 'این مورد را در اطلاعات فروشگاه پیدا نکردم' )
-			&& mb_strlen( trim( $reply_str ) ) < 200;
+		$failed = false !== mb_strpos( $reply_str, 'این مورد را در اطلاعات فروشگاه پیدا نکردم' );
 		$key    = 'fy_fail_count_' . $session_key;
 		if ( $failed ) {
 			$count = (int) get_transient( $key ) + 1;
@@ -1247,6 +1330,82 @@ class REST {
 		);
 	}
 
+	/**
+	 * پیشنهاد شخصی‌سازی‌شده بر اساس تاریخچه خرید کاربر لاگین‌کرده.
+	 * از دسته‌های خریدهای قبلی، محصول‌هایی که هنوز نخریده را پیشنهاد می‌دهد.
+	 *
+	 * @param string $message     پیام کاربر.
+	 * @param string $session_key کلید سشن.
+	 * @return \WP_REST_Response
+	 */
+	private function handle_recommendation_query( $message, $session_key ) {
+		$user_id = get_current_user_id();
+		$tools   = array( array( 'name' => 'recommend_for_user', 'ok' => false ) );
+		if ( ! $user_id ) {
+			$reply = 'برای پیشنهاد مخصوص خودت، لطفاً اول وارد حساب کاربری‌ات شو 🙂';
+			$this->log_chat( $session_key, $message, $reply, $tools );
+			return rest_ensure_response( array( 'reply' => $reply, 'products' => array(), 'tools' => $tools ) );
+		}
+		$history = get_user_meta( $user_id, 'forushyar_ai_purchase_history', true );
+		if ( empty( $history ) || ! is_array( $history ) ) {
+			// بدون تاریخچه: پرفروش‌ترین‌ها.
+			$catalog  = new CatalogReader();
+			$products = array_slice( $catalog->search( '', array( 'limit' => 5 ) ), 0, 5 );
+			$reply    = 'هنوز خریدی ثبت نشده؛ این پرفروش‌ترین‌های فروشگاه‌اند:';
+			$tools[0]['ok'] = ! empty( $products );
+			$this->log_chat( $session_key, $message, $reply, $tools );
+			return rest_ensure_response( array( 'reply' => $reply, 'products' => $products, 'tools' => $tools ) );
+		}
+		$bought_ids = array();
+		$cat_ids    = array();
+		$names      = array();
+		foreach ( $history as $h ) {
+			if ( ! empty( $h['product_id'] ) ) {
+				$bought_ids[] = (int) $h['product_id'];
+			}
+			if ( ! empty( $h['product_name'] ) ) {
+				$names[] = $h['product_name'];
+			}
+			if ( ! empty( $h['categories'] ) && is_array( $h['categories'] ) ) {
+				$cat_ids = array_merge( $cat_ids, array_map( 'intval', $h['categories'] ) );
+			}
+		}
+		$bought_ids = array_unique( $bought_ids );
+		$cat_ids    = array_unique( $cat_ids );
+		$names      = array_slice( array_unique( $names ), -3 );
+		$products   = array();
+		if ( ! empty( $cat_ids ) ) {
+			$catalog = new CatalogReader();
+			$seen    = array();
+			// هر دستهٔ خرید قبلی جدا کوئری می‌شود تا همهٔ دسته‌ها پوشش داده شوند.
+			foreach ( $cat_ids as $cid ) {
+				$term = get_term( (int) $cid, 'product_cat' );
+				if ( ! $term || is_wp_error( $term ) ) {
+					continue;
+				}
+				foreach ( $catalog->search( '', array( 'limit' => 12, 'category' => $term->slug ) ) as $p ) {
+					$pid = (int) $p['id'];
+					if ( isset( $seen[ $pid ] ) || in_array( $pid, $bought_ids, true ) ) {
+						continue;
+					}
+					$seen[ $pid ] = true;
+					$products[]   = $p;
+					if ( count( $products ) >= 5 ) {
+						break 2;
+					}
+				}
+			}
+		}
+		if ( empty( $products ) ) {
+			$reply = 'بر اساس خریدهای قبلیت چیز تازه‌ای پیدا نکردم؛ بگو دنبال چه محصولی می‌گردی تا دقیق پیشنهاد بدم 🙂';
+		} else {
+			$reply = 'بر اساس خریدهای قبلیت (' . implode( '، ', $names ) . ')، این‌ها رو پیشنهاد می‌کنم:';
+		}
+		$tools[0]['ok'] = ! empty( $products );
+		$this->log_chat( $session_key, $message, $reply, $tools );
+		return rest_ensure_response( array( 'reply' => $reply, 'products' => $products, 'tools' => $tools ) );
+	}
+
 	private function handle_remove_from_cart_query( $message, $session_key ) {
 		preg_match( '/\(حذف از سبد:\s*([^)]+)\)/u', $message, $m );
 		$cart_key = isset( $m[1] ) ? trim( $m[1] ) : '';
@@ -1486,6 +1645,11 @@ class REST {
 			return $this->with_welcome_note( $this->handle_help_query( $message, $session_key ), $welcome_note );
 		}
 
+		// «سفارش‌های من» — deterministic: مدل نباید وعدهٔ بررسی بدهد و بعد هیچی نگوید (باگ ۵).
+		if ( $this->is_my_orders_query( $message ) ) {
+			return $this->with_welcome_note( $this->handle_my_orders_query( $message, $session_key ), $welcome_note );
+		}
+
 		// پیگیری سفارش (پارسا: P0) — قبل از بقیهٔ intentها.
 		if ( get_transient( 'fy_awaiting_order_' . $session_key ) ) {
 			$order_no = $this->extract_order_number( $message );
@@ -1541,6 +1705,11 @@ class REST {
 		// (قبل از جستجوی محصول چک شود تا «همینو می‌خوام» به‌اشتباه جستجو نشود.)
 		if ( $this->is_add_to_cart_query( $message ) ) {
 			return $this->with_welcome_note( $this->handle_add_to_cart_query( $message, $session_key ), $welcome_note );
+		}
+
+		// پیشنهاد شخصی‌سازی‌شده بر اساس خریدهای قبلی — قبل از جستجوی عادی.
+		if ( $this->is_recommendation_query( $message ) ) {
+			return $this->with_welcome_note( $this->handle_recommendation_query( $message, $session_key ), $welcome_note );
 		}
 
 		// جستجوی مستقیم محصول («کفش می‌خوام») — بدون وابستگی به AI.

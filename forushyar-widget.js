@@ -56,10 +56,22 @@
 		try {
 			if (typeof count === 'number' && count >= 0) {
 				var sels = ['.dm-cart-count', '.cart-count', '.header-cart-count', '.wc-block-mini-cart__badge', '.cart-contents .count'];
+				var found = false;
 				for (var si = 0; si < sels.length; si++) {
 					var els = document.querySelectorAll(sels[si]);
 					for (var ei = 0; ei < els.length; ei++) {
 						els[ei].textContent = toFaDigits(count);
+						found = true;
+					}
+				}
+				// باگ ۴: اگر بج در DOM نبود (سبد خالی هنگام لود)، بسازش.
+				if (!found && count > 0) {
+					var btn = document.querySelector('.dm-cartbtn');
+					if (btn) {
+						var badge = document.createElement('span');
+						badge.className = 'dm-cart-count';
+						badge.textContent = toFaDigits(count);
+						btn.appendChild(badge);
 					}
 				}
 			}
