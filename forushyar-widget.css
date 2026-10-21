@@ -1,0 +1,1279 @@
+/* ===== توکن‌های طلایی دستیار فروش هوشمند kavexiron (gold ramp) — دانیال ===== */
+/* همهٔ طلایی‌های هاردکدشده با این توکن‌ها جایگزین شده‌اند. */
+:root {
+	--fy-gold-400: #d4af37;
+	--fy-gold-500: #C9A227;
+	--fy-gold-600: #b3921f;
+	--fy-gold-700: #b8860b;
+	--fy-gold-400-rgb: 212, 175, 55;
+	--fy-gold-500-rgb: 201, 162, 39;
+}
+
+/**
+ * استایل ایزولهٔ ویجت «دستیار فروش هوشمند kavexiron»
+ * همهٔ کلاس‌ها با پیشوند fy- زیر #fy-root — بدون تداخل با هیچ قالب.
+ * تم‌ها: [data-theme="light"] (پیش‌فرض) و [data-theme="dark"]
+ */
+
+/* فونت وزیرمتن: فقط نسخهٔ لوکال داخل پلاگین (assets/fonts) — بدون هیچ CDNای،
+   تا روی آی‌پی ایران هم همیشه در دسترس باشد. وزن‌ها: ۴۰۰/۵۰۰/۷۰۰/۸۰۰. */
+@font-face {
+	font-family: 'Vazirmatn';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: local('Vazirmatn'), local('Vazirmatn-Regular'),
+		url('../fonts/Vazirmatn-Regular.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Vazirmatn';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: local('Vazirmatn Medium'), local('Vazirmatn-Medium'),
+		url('../fonts/Vazirmatn-Medium.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Vazirmatn';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: local('Vazirmatn Bold'), local('Vazirmatn-Bold'),
+		url('../fonts/Vazirmatn-Bold.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Vazirmatn';
+	font-style: normal;
+	font-weight: 800;
+	font-display: swap;
+	src: local('Vazirmatn ExtraBold'), local('Vazirmatn-ExtraBold'),
+		url('../fonts/Vazirmatn-ExtraBold.woff2') format('woff2');
+}
+
+#fy-root {
+	direction: rtl;
+	--fy-primary: var(--fy-gold-500);
+	--fy-primary-hover: var(--fy-gold-600);
+	--fy-primary-text: #111111;
+	/* فونت: وزیرمتن اولویت اول برای فارسی، سپس فونت‌های سیستمی */
+	font-family: 'Vazirmatn', 'IRANSans', 'IRANSansX', Tahoma, 'Segoe UI', sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+/* ---------- تم روشن (پیش‌فرض) ---------- */
+#fy-root,
+#fy-root[data-theme="light"] {
+	--fy-bg: #ffffff;
+	--fy-bg-soft: #f6f7f9;
+	--fy-bg-input: #ffffff;
+	--fy-text: #1a1a1a;
+	--fy-text-muted: #59606c;
+	--fy-border: #e8eaed;
+	--fy-msg-user-bg: #1c1c1c;
+	--fy-msg-user-text: #f5f5f5;
+	--fy-msg-ai-bg: #ffffff;
+	--fy-msg-ai-text: #222222;
+	--fy-msg-ai-border: #e8eaed;
+	--fy-card-bg: #ffffff;
+	--fy-card-border: #e8eaed;
+	--fy-chip-bg: #ffffff;
+	--fy-chip-text: #333333;
+	--fy-shadow: 0 6px 22px rgba(0, 0, 0, 0.12);
+	--fy-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.04);
+	--fy-scrollbar: #c9cdd3;
+	--fy-scrollbar-hover: #a8adb5;
+	--fy-price: #0a7a3d;
+	--fy-link: #8a6508;
+}
+
+/* ---------- تم تیره ---------- */
+#fy-root[data-theme="dark"] {
+	--fy-bg: #1a1d23;
+	--fy-bg-soft: #22262e;
+	--fy-bg-input: #2a2f38;
+	--fy-text: #e8eaed;
+	--fy-text-muted: #9aa0a8;
+	--fy-border: #343a44;
+	--fy-msg-user-bg: var(--fy-gold-500);
+	--fy-msg-user-text: #111111;
+	--fy-msg-ai-bg: #2a2f38;
+	--fy-msg-ai-text: #e8eaed;
+	--fy-msg-ai-border: #343a44;
+	--fy-card-bg: #2a2f38;
+	--fy-card-border: #343a44;
+	--fy-chip-bg: #2a2f38;
+	--fy-chip-text: #e8eaed;
+	--fy-shadow: 0 6px 22px rgba(0, 0, 0, 0.3);
+	--fy-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.2);
+	--fy-scrollbar: #4a515c;
+	--fy-scrollbar-hover: #5c6470;
+	--fy-price: #4ade80;
+	--fy-link: var(--fy-gold-400);
+}
+
+#fy-root *,
+#fy-root *::before,
+#fy-root *::after {
+	box-sizing: border-box;
+}
+
+/* ---------- دکمهٔ شناور ---------- */
+#fy-root .fy-btn {
+	position: fixed;
+	bottom: 24px;
+	left: 24px;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	border: none;
+	cursor: pointer;
+	background: linear-gradient(135deg, var(--fy-primary), var(--fy-primary-hover));
+	color: var(--fy-primary-text);
+	box-shadow: 0 6px 20px rgba(var(--fy-gold-500-rgb), 0.4);
+	z-index: 999999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/* visible: نقطهٔ وضعیت روی لبهٔ دایره می‌نشیند و نباید بریده شود؛ لوگو با border-radius خودش گرد است و پس‌زمینهٔ دکمه هم از border-radius خودش پیروی می‌کند */
+	overflow: visible;
+}
+
+#fy-root .fy-btn img:not(.fy-btn-logo) {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 50%;
+	transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+	padding: 0;
+}
+
+#fy-root .fy-btn:hover {
+	transform: scale(1.08) rotate(4deg);
+	box-shadow: 0 8px 28px rgba(var(--fy-gold-500-rgb), 0.5);
+}
+
+#fy-root .fy-btn:active {
+	transform: scale(0.96);
+}
+
+#fy-root .fy-btn:focus-visible {
+	outline: 3px solid rgba(var(--fy-gold-500-rgb), 0.5);
+	outline-offset: 3px;
+}
+
+/* ---------- لیبل دائمی کنار دکمه ---------- */
+#fy-root .fy-label {
+	position: fixed;
+	bottom: 36px;
+	left: 96px;
+	max-width: 260px;
+	background: var(--fy-bg);
+	color: var(--fy-text);
+	border: 1px solid var(--fy-border);
+	border-radius: 999px;
+	box-shadow: var(--fy-shadow-sm);
+	padding: 11px 36px 11px 18px;
+	font-size: 13.5px;
+	font-weight: 500;
+	line-height: 1.8;
+	letter-spacing: -0.1px;
+	z-index: 999998;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	animation: fy-label-pop 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+	transform-origin: right center;
+	white-space: nowrap;
+	transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+@keyframes fy-label-pop {
+	0% {
+		opacity: 0;
+		transform: translateX(80px) scale(0.5);
+	}
+	40% {
+		opacity: 0.7;
+		transform: translateX(20px) scale(0.85);
+	}
+	70% {
+		opacity: 1;
+		transform: translateX(-10px) scale(1.02);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0) scale(1);
+	}
+}
+
+#fy-root .fy-label:hover {
+	box-shadow: var(--fy-shadow);
+	transform: translateY(-1px);
+}
+
+#fy-root .fy-label-attention {
+	animation: fy-label-glow 3s ease-in-out 1.6s 3;
+}
+
+@keyframes fy-label-glow {
+	0%, 100% { box-shadow: var(--fy-shadow-sm); }
+	50% { box-shadow: 0 0 0 4px rgba(var(--fy-gold-400-rgb), 0.25), var(--fy-shadow-sm); }
+}
+
+#fy-root .fy-label-emoji {
+	display: inline-block;
+	animation: fy-emoji-search 1.8s ease-in-out infinite;
+	transform-origin: center;
+}
+
+@keyframes fy-emoji-search {
+	0%, 100% { transform: translate(0, 0) rotate(0deg); }
+	25% { transform: translate(-3px, -2px) rotate(-12deg); }
+	50% { transform: translate(2px, 1px) rotate(8deg); }
+	75% { transform: translate(-2px, 2px) rotate(-6deg); }
+}
+
+#fy-root .fy-label-text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#fy-root .fy-label-close {
+	position: absolute;
+	top: 50%;
+	right: 8px;
+	transform: translateY(-50%);
+	border: none;
+	background: transparent;
+	color: var(--fy-text-muted);
+	cursor: pointer;
+	font-size: 12px;
+	line-height: 1;
+	padding: 4px;
+	border-radius: 4px;
+}
+
+#fy-root .fy-label-close:hover {
+	color: var(--fy-text);
+	background: var(--fy-bg-soft);
+}
+
+/* ---------- پنل چت ---------- */
+#fy-root .fy-panel {
+	position: fixed;
+	bottom: 100px;
+	left: 24px;
+	width: 380px;
+	max-width: calc(100vw - 48px);
+	height: 540px;
+	max-height: calc(100vh - 140px);
+	background: var(--fy-bg);
+	border: 1px solid var(--fy-border);
+	border-radius: 20px;
+	box-shadow: var(--fy-shadow);
+	z-index: 999999;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	animation: fy-panel-in 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
+@keyframes fy-panel-in {
+	from { opacity: 0; transform: translateY(16px) scale(0.97); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+#fy-root .fy-hidden {
+	display: none !important;
+}
+
+#fy-root .fy-head {
+	background: linear-gradient(135deg, var(--fy-primary), var(--fy-primary-hover));
+	color: var(--fy-primary-text);
+	padding: 14px 16px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+#fy-root .fy-title {
+	font-weight: 800;
+	font-size: 15.5px;
+	letter-spacing: -0.2px;
+	margin: 0;
+	flex: 1;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+#fy-root .fy-title-logo {
+	width: 32px !important;
+	height: 32px !important;
+	flex-shrink: 0;
+	border-radius: 50% !important;
+	object-fit: cover !important;
+	display: block;
+}
+
+#fy-root .fy-head-actions {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+/* دکمه تغییر تم */
+#fy-root .fy-theme-toggle {
+	border: none;
+	background: rgba(0, 0, 0, 0.12);
+	color: inherit;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+	line-height: 1;
+	transition: background 0.2s ease, transform 0.2s ease;
+	padding: 0;
+}
+
+#fy-root .fy-theme-toggle:hover {
+	background: rgba(0, 0, 0, 0.22);
+	transform: rotate(15deg);
+}
+
+#fy-root .fy-product-teaser {
+	font-size: 12px;
+	color: var(--fy-text-muted);
+	margin: 4px 0;
+	line-height: 1.5;
+}
+
+#fy-root .fy-close {
+	border: none;
+	background: transparent;
+	color: inherit;
+	font-size: 18px;
+	cursor: pointer;
+	padding: 4px 8px;
+	line-height: 1;
+	opacity: 0.75;
+	border-radius: 6px;
+	transition: opacity 0.15s ease, background 0.15s ease;
+	min-width: 44px;
+	min-height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#fy-root .fy-close:hover {
+	opacity: 1;
+	background: rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- ناحیه پیام‌ها ---------- */
+#fy-root .fy-log {
+	flex: 1;
+	overflow-y: auto;
+	padding: 16px 14px;
+	background: var(--fy-bg-soft);
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	scrollbar-width: thin;
+	scrollbar-color: var(--fy-scrollbar) transparent;
+}
+
+#fy-root .fy-log::-webkit-scrollbar {
+	width: 6px;
+}
+
+#fy-root .fy-log::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+#fy-root .fy-log::-webkit-scrollbar-thumb {
+	background: var(--fy-scrollbar);
+	border-radius: 3px;
+}
+
+#fy-root .fy-log::-webkit-scrollbar-thumb:hover {
+	background: var(--fy-scrollbar-hover);
+}
+
+#fy-root .fy-msg {
+	max-width: 86%;
+	padding: 11px 15px;
+	border-radius: 16px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 2;
+	letter-spacing: -0.1px;
+	overflow-wrap: break-word;
+	animation: fy-msg-in 0.28s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
+@keyframes fy-msg-in {
+	from { opacity: 0; transform: translateY(10px) scale(0.98); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+#fy-root .fy-msg strong {
+	font-weight: 700;
+}
+
+#fy-root .fy-msg-user {
+	align-self: flex-start;
+	background: var(--fy-msg-user-bg);
+	color: var(--fy-msg-user-text);
+	border-bottom-right-radius: 5px;
+	box-shadow: var(--fy-shadow-sm);
+}
+
+#fy-root .fy-msg-assistant {
+	align-self: flex-end;
+	background: var(--fy-msg-ai-bg);
+	color: var(--fy-msg-ai-text);
+	border: 1px solid var(--fy-msg-ai-border);
+	border-bottom-left-radius: 5px;
+	box-shadow: var(--fy-shadow-sm);
+}
+
+/* رنگ‌بندی پیام‌ها بر اساس نوع */
+#fy-root .fy-msg-success {
+	border-right: 3px solid #22c55e;
+	background: linear-gradient(to left, rgba(34,197,94,0.08), var(--fy-msg-ai-bg));
+}
+#fy-root .fy-msg-error {
+	border-right: 3px solid #ef4444;
+	background: linear-gradient(to left, rgba(239,68,68,0.08), var(--fy-msg-ai-bg));
+}
+#fy-root .fy-msg-suggest {
+	border-right: 3px solid var(--fy-gold-400);
+	background: linear-gradient(to left, rgba(var(--fy-gold-400-rgb),0.08), var(--fy-msg-ai-bg));
+}
+
+#fy-root .fy-msg-assistant strong {
+	color: var(--fy-text);
+}
+
+#fy-root .fy-link {
+	color: var(--fy-link);
+	text-decoration: underline;
+	word-break: break-all;
+}
+
+/* ---------- کارت محصول ---------- */
+#fy-root .fy-products {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	align-self: flex-end;
+	max-width: 94%;
+	animation: fy-msg-in 0.28s ease;
+}
+
+#fy-root .fy-product {
+	background: var(--fy-card-bg);
+	border: 1px solid var(--fy-card-border);
+	border-radius: 14px;
+	padding: 12px;
+	box-shadow: var(--fy-shadow-sm);
+	transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+}
+
+#fy-root .fy-product:hover {
+	box-shadow: var(--fy-shadow);
+	transform: translateY(-2px);
+	border-color: var(--fy-primary);
+}
+
+#fy-root .fy-product-img {
+	width: 100%;
+	height: 130px;
+	object-fit: cover;
+	border-radius: 10px;
+	margin-bottom: 10px;
+	background: var(--fy-bg-soft);
+}
+
+#fy-root .fy-product-name {
+	font-size: 13.5px;
+	font-weight: 700;
+	color: var(--fy-text);
+	line-height: 1.7;
+	margin-bottom: 4px;
+}
+
+#fy-root .fy-product-price {
+	font-size: 13px;
+	color: var(--fy-price);
+	font-weight: 700;
+	margin-bottom: 10px;
+}
+
+#fy-root .fy-product-actions {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+#fy-root .fy-add-cart {
+	flex: 1;
+	border: none;
+	border-radius: 999px;
+	background: linear-gradient(135deg, var(--fy-primary), var(--fy-primary-hover));
+	color: var(--fy-primary-text);
+	font-family: inherit;
+	font-size: 13px;
+	font-weight: 700;
+	padding: 9px 14px;
+	cursor: pointer;
+	transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+	box-shadow: 0 2px 8px rgba(var(--fy-gold-500-rgb), 0.3);
+}
+
+#fy-root .fy-add-cart:hover:not(:disabled) {
+	transform: scale(1.03);
+	box-shadow: 0 4px 12px rgba(var(--fy-gold-500-rgb), 0.4);
+}
+
+#fy-root .fy-add-cart:active:not(:disabled) {
+	transform: scale(0.98);
+}
+
+#fy-root .fy-add-cart:disabled {
+	opacity: 0.6;
+	cursor: wait;
+}
+
+#fy-root .fy-checkout-link {
+	width: 40px;
+	height: 40px;
+	flex-shrink: 0;
+	border-radius: 999px;
+	background: linear-gradient(135deg, var(--fy-primary), var(--fy-primary-hover));
+	color: var(--fy-primary-text);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	box-shadow: 0 2px 8px rgba(var(--fy-gold-500-rgb), 0.3);
+	transition: transform 0.15s ease;
+	cursor: pointer;
+}
+
+#fy-root .fy-checkout-link:hover {
+	transform: scale(1.08);
+}
+
+#fy-root .fy-view {
+	width: 40px;
+	height: 40px;
+	flex-shrink: 0;
+	border: 1px solid var(--fy-border);
+	background: var(--fy-bg-soft);
+	color: var(--fy-text);
+	border-radius: 999px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	transition: transform 0.15s ease;
+}
+
+#fy-root .fy-view:hover {
+	transform: scale(1.08);
+	text-decoration: none;
+}
+
+/* دکمه‌های پاسخ سریع */
+#fy-root .fy-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-self: flex-end;
+	max-width: 100%;
+	animation: fy-msg-in 0.28s ease;
+}
+
+#fy-root .fy-chip {
+	border: 1.5px solid var(--fy-primary);
+	background: var(--fy-chip-bg);
+	color: var(--fy-chip-text);
+	border-radius: 999px;
+	padding: 8px 16px;
+	font-size: 13px;
+	cursor: pointer;
+	font-family: inherit;
+	transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+#fy-root .fy-chip:hover {
+	background: var(--fy-primary);
+	color: var(--fy-primary-text);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 10px rgba(var(--fy-gold-500-rgb), 0.3);
+}
+
+#fy-root .fy-chip:active {
+	transform: translateY(0);
+}
+
+/* نشان «در حال نوشتن» */
+#fy-root .fy-typing {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 14px 18px !important;
+}
+
+#fy-root .fy-typing span {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--fy-text-muted);
+	animation: fy-blink 1.2s infinite;
+}
+
+#fy-root .fy-typing span:nth-child(2) { animation-delay: 0.2s; }
+#fy-root .fy-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes fy-blink {
+	0%, 80%, 100% { opacity: 0.25; transform: scale(0.85); }
+	40% { opacity: 1; transform: scale(1.1); }
+}
+
+/* ---------- فرم ارسال ---------- */
+#fy-root .fy-form {
+	display: flex;
+	gap: 10px;
+	padding: 14px;
+	background: var(--fy-bg);
+	border-top: 1px solid var(--fy-border);
+	flex-shrink: 0;
+	align-items: center;
+}
+
+#fy-root .fy-disclaimer {
+	text-align: center;
+	font-size: 11px;
+	color: var(--fy-text-muted);
+	padding: 6px 12px 10px;
+	background: var(--fy-bg);
+	flex-shrink: 0;
+}
+
+#fy-root .fy-input {
+	flex: 1;
+	border: 1.5px solid var(--fy-border);
+	border-radius: 999px;
+	padding: 11px 18px;
+	font-size: 13.5px;
+	font-family: inherit;
+	direction: rtl;
+	background: var(--fy-bg-input);
+	color: var(--fy-text);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#fy-root .fy-input::placeholder {
+	color: var(--fy-text-muted);
+}
+
+#fy-root .fy-input:focus {
+	outline: none;
+	border-color: var(--fy-primary);
+	box-shadow: 0 0 0 3px rgba(var(--fy-gold-500-rgb), 0.15);
+}
+
+#fy-root .fy-send {
+	width: 46px;
+	height: 46px;
+	flex-shrink: 0;
+	border-radius: 50%;
+	border: none;
+	cursor: pointer;
+	background: linear-gradient(135deg, var(--fy-primary), var(--fy-primary-hover));
+	color: var(--fy-primary-text);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+	box-shadow: 0 3px 10px rgba(var(--fy-gold-500-rgb), 0.35);
+	padding: 0;
+}
+
+#fy-root .fy-send:hover {
+	transform: scale(1.08);
+	box-shadow: 0 5px 16px rgba(var(--fy-gold-500-rgb), 0.45);
+}
+
+#fy-root .fy-send:active {
+	transform: scale(0.94);
+}
+
+#fy-root .fy-send:disabled {
+	opacity: 0.5;
+	cursor: wait;
+	transform: none;
+}
+
+/* ---------- دکمه‌های بازخورد و کپی ---------- */
+#fy-root .fy-feedback {
+	display: flex;
+	gap: 6px;
+	margin-top: 10px;
+	opacity: 0.55;
+	transition: opacity 0.2s ease;
+}
+
+#fy-root .fy-msg:hover .fy-feedback {
+	opacity: 1;
+}
+
+#fy-root .fy-fb-btn {
+	background: transparent;
+	border: 1px solid var(--fy-border);
+	border-radius: 8px;
+	padding: 4px 10px;
+	font-size: 13px;
+	cursor: pointer;
+	color: var(--fy-text-muted);
+	transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+#fy-root .fy-fb-btn:hover:not(:disabled) {
+	background: var(--fy-bg-soft);
+	color: var(--fy-text);
+	border-color: var(--fy-text-muted);
+	transform: translateY(-1px);
+}
+
+#fy-root .fy-fb-btn:disabled {
+	cursor: default;
+	opacity: 0.6;
+}
+
+#fy-root .fy-fb-btn.fy-fb-active {
+	background: var(--fy-primary);
+	border-color: var(--fy-primary);
+	color: var(--fy-primary-text);
+}
+
+/* ---------- موبایل ---------- */
+@media (max-width: 480px) {
+	#fy-root .fy-panel {
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		max-width: 100%;
+		height: 85dvh;
+		max-height: 85dvh;
+		border-radius: 22px 22px 0 0;
+		border-left: none;
+		border-right: none;
+		border-bottom: none;
+	}
+
+	#fy-root .fy-btn {
+		bottom: 18px;
+		left: 18px;
+		width: 56px;
+		height: 56px;
+	}
+
+	#fy-root .fy-label {
+		left: 86px;
+		max-width: 200px;
+		font-size: 12px;
+		padding: 8px 30px 8px 12px;
+	}
+
+	#fy-root .fy-msg {
+		max-width: 90%;
+		font-size: 13px;
+	}
+
+	#fy-root .fy-form {
+		padding: 10px 12px;
+		padding-bottom: max(10px, env(safe-area-inset-bottom));
+	}
+
+	/* جلوگیری از زوم خودکار iOS هنگام فوکوس اینپوت (زیر ۱۶px زوم می‌کند). */
+	#fy-root .fy-input {
+		font-size: 16px;
+	}
+}
+
+/* ---------- افکت‌های آیکن‌ها ---------- */
+
+/* آیکن دکمه شناور: شناور بودن ملایم */
+#fy-root .fy-btn svg {
+	width: 28px;
+	height: 28px;
+	animation: fy-float 3s ease-in-out infinite;
+	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* آواتار ربات kavexiron روی دکمهٔ شناور — !important تا هیچ CSS قالب/صفحه‌ای سایزش را خراب نکند */
+#fy-root .fy-btn-logo {
+	width: 54px !important;
+	height: 54px !important;
+	min-width: 54px;
+	min-height: 54px;
+	border-radius: 50%;
+	object-fit: cover;
+	display: block !important;
+	flex-shrink: 0;
+	animation: fy-float 3s ease-in-out infinite;
+	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+/* اگر لوگو لود نشد، جای خالی زشت نماند */
+#fy-root .fy-btn-logo[data-broken] {
+	display: none !important;
+}
+
+@keyframes fy-float {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-3px); }
+}
+
+#fy-root .fy-btn:hover svg,
+#fy-root .fy-btn:hover .fy-btn-logo {
+	animation: fy-wiggle 0.5s ease;
+}
+
+@keyframes fy-wiggle {
+	0%, 100% { transform: rotate(0); }
+	25% { transform: rotate(-10deg); }
+	75% { transform: rotate(10deg); }
+}
+
+/* آیکن ارسال: پرواز هنگام هاور */
+#fy-root .fy-send svg {
+	width: 20px;
+	height: 20px;
+	transform: scaleX(-1);
+	transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#fy-root .fy-send:hover svg {
+	transform: scaleX(-1) translateX(3px) scale(1.15);
+}
+
+#fy-root .fy-send:active svg {
+	transform: scaleX(-1) translateX(8px) scale(0.9);
+	opacity: 0.7;
+}
+
+/* دکمه تم: چرخش سه‌بعدی */
+#fy-root .fy-theme-toggle {
+	transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease !important;
+}
+
+#fy-root .fy-theme-toggle:hover {
+	transform: rotate(180deg) scale(1.1) !important;
+}
+
+/* دکمه بستن: چرخش */
+#fy-root .fy-close {
+	transition: transform 0.3s ease, opacity 0.15s ease, background 0.15s ease !important;
+}
+
+#fy-root .fy-close:hover {
+	transform: rotate(90deg);
+}
+
+/* دکمه‌های بازخورد: جهش */
+#fy-root .fy-fb-btn {
+	transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.15s ease, color 0.15s ease !important;
+}
+
+#fy-root .fy-fb-btn:hover:not(:disabled) {
+	transform: translateY(-2px) scale(1.08);
+}
+
+#fy-root .fy-fb-btn:active:not(:disabled) {
+	transform: scale(0.92);
+}
+
+#fy-root .fy-fb-btn.fy-fb-active {
+	animation: fy-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fy-pop {
+	0% { transform: scale(0.7); }
+	60% { transform: scale(1.2); }
+	100% { transform: scale(1); }
+}
+
+/* چیپ‌ها: موج هنگام ظاهر شدن */
+#fy-root .fy-chip {
+	animation: fy-chip-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+#fy-root .fy-chips .fy-chip:nth-child(1) { animation-delay: 0.05s; }
+#fy-root .fy-chips .fy-chip:nth-child(2) { animation-delay: 0.12s; }
+#fy-root .fy-chips .fy-chip:nth-child(3) { animation-delay: 0.19s; }
+#fy-root .fy-chips .fy-chip:nth-child(4) { animation-delay: 0.26s; }
+
+@keyframes fy-chip-in {
+	from { opacity: 0; transform: translateY(12px) scale(0.85); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* کارت محصول: درخشش هنگام هاور */
+#fy-root .fy-product {
+	position: relative;
+	overflow: hidden;
+}
+
+#fy-root .fy-product::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: -100%;
+	width: 60%;
+	height: 100%;
+	background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+	transform: skewX(20deg);
+	transition: right 0.6s ease;
+	pointer-events: none;
+}
+
+#fy-root .fy-product:hover::after {
+	right: 130%;
+}
+
+#fy-root[data-theme="dark"] .fy-product::after {
+	background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+}
+
+/* نقطهٔ وضعیت: مرکزش روی محیط دایره (نقطهٔ ۴۵ درجه) می‌نشیند، پس نیمه‌اش بیرون از دایره است؛
+   برای همین دکمه overflow:visible دارد و نقطه حلقهٔ سفید دارد تا روی هر پس‌زمینه‌ای کامل و خوانا دیده شود. */
+#fy-root .fy-btn-dot {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	border: 2px solid #ffffff;
+	background-color: #22c55e;
+	z-index: 9999;
+	animation: fy-heartbeat 1.6s ease-in-out infinite;
+}
+
+@keyframes fy-heartbeat {
+	0%, 100% { transform: scale(1); }
+	14% { transform: scale(1.35); }
+	28% { transform: scale(1); }
+	42% { transform: scale(1.35); }
+	56% { transform: scale(1); }
+}
+
+/* احترام به کاهش حرکت */
+@media (prefers-reduced-motion: reduce) {
+	#fy-root .fy-panel,
+	#fy-root .fy-btn,
+	#fy-root .fy-msg,
+	#fy-root .fy-chip,
+	#fy-root .fy-btn svg,
+	#fy-root .fy-send svg,
+	#fy-root .fy-btn-dot,
+	#fy-root .fy-btn-logo,
+	#fy-root .fy-label,
+	#fy-root .fy-label-attention,
+	#fy-root .fy-label-emoji,
+	#fy-root .fy-help-chip,
+	#fy-root .fy-added-flash,
+	#fy-root .fy-product::after {
+		animation: none !important;
+		transition: none !important;
+	}
+}
+
+/* استایل چیپ راهنما */
+#fy-root .fy-help-chip {
+	display: inline-block;
+	margin: 8px 12px;
+	padding: 8px 16px;
+	background: var(--fy-bg, #fff);
+	border: 1px solid var(--fy-border, #ddd);
+	border-radius: 20px;
+	color: var(--fy-link, var(--fy-gold-700));
+	font-size: 13px;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+#fy-root .fy-help-chip:hover {
+	background: var(--fy-hover, #f5f5f5);
+}
+
+/* استایل اقلام سبد با دکمه حذف */
+#fy-root .fy-cart-items {
+	margin: 8px 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+#fy-root .fy-cart-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 12px;
+	background: var(--fy-bg, #fff);
+	border: 1px solid var(--fy-border, #ddd);
+	border-radius: 8px;
+	font-size: 13px;
+}
+#fy-root .fy-cart-remove {
+	min-width: 32px;
+	min-height: 32px;
+	border: none;
+	background: transparent;
+	color: #c0392b;
+	font-size: 20px;
+	cursor: pointer;
+	border-radius: 50%;
+}
+#fy-root .fy-cart-remove:hover {
+	background: #fdecea;
+}
+#fy-root .fy-cart-remove:disabled {
+	opacity: 0.5;
+}
+
+/* ===== سینک از سایت دمو (2026-10-19) ===== */
+/* اوررایدهای رنگ/چینش حباب پیام که با تم اصلی تداخل داشتند حذف شدند؛
+   حباب‌ها از تم اصلی (متغیرها) استفاده می‌کنند. این‌جا فقط فونت بزرگ‌تر موبایل باقی مانده. */
+/* فونت بزرگ‌تر برای حباب‌های پیام در موبایل (حداقل ۱۶px) */
+@media (max-width: 768px) {
+	#fy-root .fy-msg {
+		font-size: 16px;
+	}
+}
+
+/* آواتار فقط از طریق <img class="fy-btn-logo"> رندر می‌شود (JS، با logoUrl قابل‌تنظیم) —
+   background-image حذف شد تا رندر دوبل/دانلود تکراری نداشته باشیم. */
+
+/* نام محصول کلیک‌شدنی در فهرست متنی دستیار (نمایش کارت تکی). */
+#fy-root .fy-product-link {
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	color: var(--fy-link, var(--fy-gold-400));
+	text-decoration: underline;
+	cursor: pointer;
+}
+#fy-root .fy-product-link:hover {
+	opacity: 0.8;
+}
+
+/* ---------- کوییک‌ویو داخل چت (رندر JS) ---------- */
+#fy-root .fy-qv-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 1000000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	animation: fy-panel-in 0.25s ease;
+}
+#fy-root .fy-qv-modal {
+	position: relative;
+	background: var(--fy-bg);
+	border: 1px solid var(--fy-border);
+	border-radius: 18px;
+	box-shadow: var(--fy-shadow);
+	max-width: 360px;
+	width: 100%;
+	max-height: 80vh;
+	overflow-y: auto;
+	padding: 20px 16px 16px;
+	text-align: center;
+}
+#fy-root .fy-qv-close {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	border: none;
+	background: var(--fy-bg-soft);
+	color: var(--fy-text-muted);
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	cursor: pointer;
+	font-size: 14px;
+	line-height: 1;
+}
+#fy-root .fy-qv-close:hover {
+	color: var(--fy-text);
+}
+#fy-root .fy-qv-img {
+	width: 100%;
+	max-height: 220px;
+	object-fit: cover;
+	border-radius: 12px;
+	margin-bottom: 12px;
+	background: var(--fy-bg-soft);
+}
+#fy-root .fy-qv-name {
+	font-size: 15px;
+	font-weight: 800;
+	color: var(--fy-text);
+	line-height: 1.8;
+	margin-bottom: 8px;
+}
+#fy-root .fy-qv-desc {
+	font-size: 13px;
+	color: var(--fy-text-muted);
+	line-height: 1.9;
+	margin-bottom: 12px;
+}
+#fy-root .fy-qv-price {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	margin-bottom: 12px;
+}
+#fy-root .fy-qv-oos {
+	display: inline-block;
+	background: #ef4444;
+	color: #fff;
+	font-size: 13px;
+	font-weight: 700;
+	padding: 6px 18px;
+	border-radius: 999px;
+	margin-bottom: 12px;
+}
+#fy-root .fy-qv-actions {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	justify-content: center;
+	margin-top: 12px;
+}
+
+/* ---------- بج‌های روی عکس محصول (رندر JS) ---------- */
+#fy-root .fy-product-imgwrap {
+	position: relative;
+}
+#fy-root .fy-badge {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	font-size: 11px;
+	font-weight: 700;
+	padding: 3px 10px;
+	border-radius: 999px;
+	color: #fff;
+	line-height: 1.8;
+	z-index: 1;
+}
+#fy-root .fy-badge-oos {
+	background: #ef4444;
+}
+#fy-root .fy-badge-sale {
+	background: #22c55e;
+}
+#fy-root .fy-badge-best {
+	background: var(--fy-primary);
+	color: var(--fy-primary-text);
+}
+#fy-root .fy-badge + .fy-badge {
+	top: 34px;
+}
+
+/* فلش سبز لحظه‌ای پس از افزودن به سبد */
+#fy-root .fy-added-flash {
+	animation: fy-added-flash 1.2s ease;
+}
+@keyframes fy-added-flash {
+	0%, 100% { box-shadow: var(--fy-shadow-sm); }
+	30% { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.5), var(--fy-shadow); }
+}
+
+/* هشدار موجودی کم (رندر JS) */
+#fy-root .fy-low-stock {
+	font-size: 12px;
+	font-weight: 700;
+	color: #b45309;
+	margin-bottom: 8px;
+}
+#fy-root[data-theme="dark"] .fy-low-stock {
+	color: #fbbf24;
+}
+
+/* قیمت قدیم و قیمت تخفیف‌دار */
+#fy-root .fy-price-old {
+	text-decoration: line-through;
+	color: var(--fy-text-muted);
+	font-size: 12px;
+	margin-inline-end: 6px;
+}
+#fy-root .fy-price-sale {
+	color: #dc2626;
+}
+#fy-root[data-theme="dark"] .fy-price-sale {
+	color: #f87171;
+}
+
+/* تگ «اقتصادی‌ترین» */
+#fy-root .fy-eco-tag {
+	font-size: 11px;
+	font-weight: 700;
+	background: rgba(34, 197, 94, 0.12);
+	color: #16a34a;
+	border: 1px solid rgba(34, 197, 94, 0.35);
+	padding: 2px 10px;
+	border-radius: 999px;
+}
+
+/* دکمه «درباره این محصول بپرس» */
+#fy-root .fy-ask-btn {
+	border: 1px solid var(--fy-border);
+	background: var(--fy-bg-soft);
+	border-radius: 999px;
+	width: 40px;
+	height: 40px;
+	font-size: 18px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	transition: transform 0.15s ease;
+}
+#fy-root .fy-ask-btn:hover {
+	transform: scale(1.08);
+}
+
+/* یادداشت «کمی طول کشید» روی نشان تایپینگ */
+#fy-root .fy-typing-note {
+	font-size: 12px;
+	color: var(--fy-text-muted);
+	white-space: nowrap;
+}
+
+/* نام محصول کلیک‌شدنی در کارت */
+#fy-root .fy-clickable {
+	cursor: pointer;
+}
