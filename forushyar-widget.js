@@ -393,6 +393,18 @@
 		}
 	}
 
+	function forceScroll() {
+		// بعد از ارسال پیام کاربر یا رسیدن جواب، همیشه برو ته چت.
+		var go = function () {
+			log.scrollTop = log.scrollHeight;
+		};
+		go();
+		if (typeof requestAnimationFrame !== 'undefined') {
+			requestAnimationFrame(go);
+		}
+		setTimeout(go, 150);
+	}
+
 	function hideTyping(d) {
 		if (d._honestyTimer) {
 			clearTimeout(d._honestyTimer);
@@ -962,8 +974,10 @@
 		var displayMsg = opts.displayMessage !== undefined ? opts.displayMessage : msg;
 		if (displayMsg) {
 			addMsg('user', displayMsg, false);
+			forceScroll();
 		}
 		var typing = showTyping();
+		forceScroll();
 		// شناسه سشن در لحظه ارسال — برای نادیده گرفتن جواب‌های چت قبلی.
 		var reqSid = sid;
 
@@ -1022,6 +1036,7 @@
 				}
 				if (success) {
 					addMsg('assistant', renderRich(res.data.reply), true);
+					forceScroll();
 					var cards = renderProducts(res.data.products);
 					if (cards) {
 						log.appendChild(cards);
