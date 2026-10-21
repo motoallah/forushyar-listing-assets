@@ -62,6 +62,7 @@
 					post('«' + nm + '» (شناسه ' + pid + ') را به سبد خرید اضافه کن').then(function (res) {
 						if (res.ok && res.data && res.data.reply) {
 							btn.textContent = T.added || 'به سبد اضافه شد ✓';
+							updateBadge(cartCountOf(res));
 							if (afterAdd) { afterAdd(res.data.reply); }
 						} else {
 							btn.disabled = false;
@@ -141,11 +142,35 @@
 	var sBtn = document.getElementById('fy-dash-search-btn');
 	var sRes = document.getElementById('fy-dash-search-results');
 
+	// بج سبد هدر را زنده آپدیت کن (مثل ویجت شناور).
+	function updateBadge(count) {
+		if (typeof count !== 'number' || count < 0) { return; }
+		var sels = ['.dm-cart-count', '.cart-count', '.header-cart-count', '.wc-block-mini-cart__badge', '.cart-contents .count'];
+		var found = false, si, ei, els;
+		for (si = 0; si < sels.length; si++) {
+			els = document.querySelectorAll(sels[si]);
+			for (ei = 0; ei < els.length; ei++) { els[ei].textContent = faDigits(count); found = true; }
+		}
+		if (!found && count > 0) {
+			var btn = document.querySelector('.dm-cartbtn');
+			if (btn) {
+				var badge = document.createElement('span');
+				badge.className = 'dm-cart-count';
+				badge.textContent = faDigits(count);
+				btn.appendChild(badge);
+			}
+		}
+	}
+	function cartCountOf(res) {
+		return (res && res.data && typeof res.data.cart_count === 'number') ? res.data.cart_count : undefined;
+	}
+
 	function doSearch() {
 		var q = (sInput.value || '').trim();
 		if (!q || !sRes) { return; }
 		sRes.innerHTML = '<p class="fy-dash-note">' + esc(T.thinking || '…') + '</p>';
-		post(q).then(function (res) {
+		// باکس سرچ = جستجوی صریح: قالب «دنبال X می‌گردم» تا مسیر قطعی جستجو بگیرد.
+		post('دنبال ' + q + ' می‌گردم').then(function (res) {
 			var products = (res.ok && res.data && res.data.products) || [];
 			if (!products.length) {
 				sRes.innerHTML = '<p class="fy-dash-note">' + esc(T.noResult || 'یافت نشد') + '</p>';
