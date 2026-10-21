@@ -81,26 +81,30 @@ class Customer_Dashboard {
 			$ver,
 			true
 		);
-		wp_localize_script(
-			'forushyar-dashboard',
-			'forushyarDashboard',
-			array(
-				'restUrl' => esc_url_raw( rest_url( 'forushyar/v1/chat' ) ),
-				'nonce'   => wp_create_nonce( 'forushyar_ai_widget' ),
-				'welcome' => (string) Settings::get( 'welcome', '' ),
-				'i18n'    => array(
-					'you'        => __( 'شما', 'forushyar-ai' ),
-					'assistant'  => __( 'دستیار فروش', 'forushyar-ai' ),
-					'addToCart'  => __( 'افزودن به سبد', 'forushyar-ai' ),
-					'added'      => __( 'به سبد اضافه شد ✓', 'forushyar-ai' ),
-					'viewProduct'=> __( 'مشاهده محصول', 'forushyar-ai' ),
-					'thinking'   => __( 'دستیار دارد می‌نویسد…', 'forushyar-ai' ),
-					'error'      => __( 'خطا در ارتباط؛ دوباره تلاش کنید.', 'forushyar-ai' ),
-					'searchPh'   => __( 'نام محصول را بنویسید…', 'forushyar-ai' ),
-					'chatPh'     => __( 'پیامت را بنویس…', 'forushyar-ai' ),
-					'noResult'   => __( 'محصولی پیدا نشد.', 'forushyar-ai' ),
-				),
-			)
+		// نکته: کانفیگ به‌صورت inline در render() چاپ می‌شود (قابل‌اعتمادتر از
+		// wp_localize_script در صفحهٔ حساب کاربری).
+	}
+
+	/**
+	 * کانفیگ JS داشبورد.
+	 */
+	private function js_config() {
+		return array(
+			'restUrl' => esc_url_raw( rest_url( 'forushyar/v1/chat' ) ),
+			'nonce'   => wp_create_nonce( 'forushyar_ai_widget' ),
+			'welcome' => (string) Settings::get( 'welcome', '' ),
+			'i18n'    => array(
+				'you'        => __( 'شما', 'forushyar-ai' ),
+				'assistant'  => __( 'دستیار فروش', 'forushyar-ai' ),
+				'addToCart'  => __( 'افزودن به سبد', 'forushyar-ai' ),
+				'added'      => __( 'به سبد اضافه شد ✓', 'forushyar-ai' ),
+				'viewProduct'=> __( 'مشاهده محصول', 'forushyar-ai' ),
+				'thinking'   => __( 'دستیار دارد می‌نویسد…', 'forushyar-ai' ),
+				'error'      => __( 'خطا در ارتباط؛ دوباره تلاش کنید.', 'forushyar-ai' ),
+				'searchPh'   => __( 'نام محصول را بنویسید…', 'forushyar-ai' ),
+				'chatPh'     => __( 'پیامت را بنویس…', 'forushyar-ai' ),
+				'noResult'   => __( 'محصولی پیدا نشد.', 'forushyar-ai' ),
+			),
 		);
 	}
 
@@ -119,6 +123,7 @@ class Customer_Dashboard {
 		$recs      = $rest->get_recommended_products( $user_id );
 		$has_hist  = $this->has_purchase_history( $user_id );
 		?>
+		<script>var forushyarDashboard = <?php echo wp_json_encode( $this->js_config() ); ?>;</script>
 		<div class="fy-dash">
 			<div class="fy-dash-head">
 				<h3><?php echo esc_html( sprintf( __( 'سلام %s! 👋', 'forushyar-ai' ), $hello ) ); ?></h3>

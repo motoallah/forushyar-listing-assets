@@ -716,11 +716,17 @@ class REST {
 		if ( preg_match( '/(.)\1{6,}/u', $t ) ) {
 			return true;
 		}
-		// حروف‌سوخاری لاتین («asdfghj»): فقط لاتین، بدون فاصله، بدون هیچ مصوتی.
+		// حروف‌سوخاری لاتین («asdfghj», «qwerty»): فقط لاتین و —
+		// یا بدون هیچ مصوتی، یا با زنجیرهٔ ۵+ صامت پشت سر هم.
 		if ( preg_match( '/^[a-zA-Z]+$/', str_replace( ' ', '', $t ) ) ) {
 			$latin = strtolower( str_replace( ' ', '', $t ) );
-			if ( mb_strlen( $latin ) >= 4 && ! preg_match( '/[aeiou]/', $latin ) ) {
-				return true;
+			if ( mb_strlen( $latin ) >= 4 ) {
+				if ( ! preg_match( '/[aeiou]/', $latin ) ) {
+					return true;
+				}
+				if ( preg_match( '/[bcdfghjklmnpqrstvwxz]{5,}/', $latin ) ) {
+					return true;
+				}
 			}
 		}
 		return false;
