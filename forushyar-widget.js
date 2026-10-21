@@ -49,13 +49,31 @@
 		} catch (e) {}
 	}
 
-	// رفرش بج سبد ووکامرس بدون رفرش صفحه.
-	function refreshCartFragments() {
+	// رفرش بج سبد بدون رفرش صفحه (امیر).
+	// چون wc-cart-fragments روی لندینگ لود نیست، بج را مستقیم با DOM آپدیت
+	// می‌کنیم؛ trigger ووکامرس هم برای سازگاری با تم‌های دیگر می‌ماند.
+	function refreshCartFragments(count) {
 		try {
+			if (typeof count === 'number' && count >= 0) {
+				var sels = ['.dm-cart-count', '.cart-count', '.header-cart-count', '.wc-block-mini-cart__badge', '.cart-contents .count'];
+				for (var si = 0; si < sels.length; si++) {
+					var els = document.querySelectorAll(sels[si]);
+					for (var ei = 0; ei < els.length; ei++) {
+						els[ei].textContent = toFaDigits(count);
+					}
+				}
+			}
 			if (window.jQuery && window.jQuery(document.body)) {
 				window.jQuery(document.body).trigger('wc_fragment_refresh');
 			}
 		} catch (e) {}
+	}
+
+	function cartCountOf(res) {
+		if (res && res.data && typeof res.data.cart_count === 'number') {
+			return res.data.cart_count;
+		}
+		return undefined;
 	}
 
 	// رندر تاریخچهٔ ذخیره‌شده هنگام باز شدن چت.
@@ -603,7 +621,7 @@
 									checkoutLink.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
 									actions.appendChild(checkoutLink);
 								}
-								refreshCartFragments();
+								refreshCartFragments(cartCountOf(res));
 							} else {
 								addBtn.disabled = false;
 								addBtn.textContent = '🛒 افزودن به سبد';
@@ -744,7 +762,7 @@
 				sendMessage('«' + (p.name || '') + '» (شناسه ' + p.id + ') را به سبد خرید اضافه کن', {
 					displayMessage: '🛒 افزودن «' + (p.name || '') + '» به سبد…',
 					onDone: function (success, res, cartAdded) {
-						if (cartAdded) { refreshCartFragments(); }
+						if (cartAdded) { refreshCartFragments(cartCountOf(res)); }
 					}
 				});
 			});
@@ -1052,7 +1070,7 @@
 					}
 					// اگر محصول به سبد اضافه شد، بج سبد هدر را بدون رفرش آپدیت کن.
 					if (cartAdded) {
-						refreshCartFragments();
+						refreshCartFragments(cartCountOf(res));
 					}
 					// در تاریخچه، پیام نمایشی دوستانه ذخیره می‌شود نه دستور داخلی ابزار.
 					chatHistory.push({ role: 'user', content: displayMsg || msg });

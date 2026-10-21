@@ -571,6 +571,78 @@ class REST {
 	}
 
 	/**
+	 * تعدیل محتوای پیام: فحاشی → جواب مؤدبانه و کوتاه؛ هذیان → درخواست شفاف‌سازی.
+	 * deterministic است (به مدل اتکا ندارد) تا دستیار هرگز با توهین جواب ندهد
+	 * یا وارد بحث بی‌ربط نشود. در صورت تمیز بودن پیام false برمی‌گرداند.
+	 *
+	 * @param string $message پیام کاربر.
+	 * @return string|false متن آمادهٔ پاسخ یا false.
+	 */
+	private function moderate_message( $message ) {
+		$msg = str_replace( array( 'ي', 'ك', "‌" ), array( 'ی', 'ک', '' ), (string) $message );
+		if ( $this->contains_profanity( $msg ) ) {
+			return 'با این لحن نمی‌تونم کمکتون کنم 🙏 اگه سؤالی دربارهٔ محصولات یا سفارشتون دارید، در خدمتم.';
+		}
+		if ( $this->is_gibberish( $msg ) ) {
+			return 'متوجه منظورتون نشدم 😅 دنبال چه محصولی می‌گردید؟';
+		}
+		return false;
+	}
+
+	/**
+	 * فهرست فحش‌های رایج فارسی — فقط موارد واضح و پرتکرار.
+	 * تطبیق با مرز واژه است تا «خر» داخل «خرید» یا «آخر» خطا ندهد.
+	 *
+	 * @return array
+	 */
+	private function profanity_list() {
+		return array(
+			'احمق', 'خنگ', 'کودن', 'بیشعور', 'بی‌شعور',
+			'لعنتی', 'کسخل', 'جاکش', 'دیوث', 'قرمساق',
+			'حرومزاده', 'حروم‌زاده', 'بیناموس', 'بی‌ناموس', 'مادرجنده',
+			'پفیوز', 'الدنگ', 'عوضی', 'گوساله', 'الاغ', 'نفهم', 'ابله',
+		);
+	}
+
+	/**
+	 * آیا پیام فحاشی دارد؟
+	 *
+	 * @param string $msg پیام نرمال‌شده.
+	 * @return bool
+	 */
+	private function contains_profanity( $msg ) {
+		foreach ( $this->profanity_list() as $w ) {
+			$w = str_replace( array( 'ي', 'ك', "‌" ), array( 'ی', 'ک', '' ), $w );
+			if ( preg_match( '/(?<![\p{L}\p{N}])' . preg_quote( $w, '/' ) . '(?![\p{L}\p{N}])/u', $msg ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * آیا پیام هذیان است؟ (بدون هیچ توکن حرفی، یا تکرار افراطی یک کاراکتر)
+	 *
+	 * @param string $msg پیام نرمال‌شده.
+	 * @return bool
+	 */
+	private function is_gibberish( $msg ) {
+		$t = trim( (string) $msg );
+		if ( mb_strlen( $t ) < 2 ) {
+			return true;
+		}
+		// هیچ توکن حرفیِ ۲+ حرفی نداشت (فقط ایموجی/عدد/نماد).
+		if ( ! preg_match( '/\p{L}{2,}/u', $t ) ) {
+			return true;
+		}
+		// تکرار یک کاراکتر ۷+ بار پشت سر هم («ااااااا»).
+		if ( preg_match( '/(.)\1{6,}/u', $t ) ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * استخراج شماره موبایل ایرانی از پیام (ارقام فارسی/عربی هم پشتیبانی می‌شوند).
 	 *
 	 * @param string $message پیام کاربر.
@@ -731,6 +803,12 @@ class REST {
 	private function with_welcome_note( $response, $note ) {
 		if ( '' !== $note && $response instanceof \WP_REST_Response && isset( $response->data['reply'] ) && is_string( $response->data['reply'] ) ) {
 			$response->data['reply'] .= $note;
+		}
+		// بج سبد هدر (امیر): تعداد فعلی سبد همیشه همراه پاسخ می‌آید تا ویجت
+		// بج را بدون رفرش صفحه آپدیت کند — چون wc-cart-fragments روی لندینگ
+		// لود نیست و trigger آن بی‌اثر است.
+		if ( $response instanceof \WP_REST_Response && function_exists( 'WC' ) && WC()->cart ) {
+			$response->data['cart_count'] = (int) WC()->cart->get_cart_contents_count();
 		}
 		return $response;
 	}
@@ -1501,6 +1579,21 @@ class REST {
 		// چون round-trip ابزار در AvalAI با خطای 400 مواجه می‌شود.
 		if ( $this->is_cart_query( $message ) ) {
 			return $this->with_welcome_note( $this->handle_cart_query( $message, $session_key ), $welcome_note );
+		}
+
+		// تعدیل محتوا (پارسا/ترانه): فحاشی و هذیان‌گویی — deterministic و بدون
+		// صدا زدن AI. این‌جا (بعد از همهٔ روت‌های قطعی، قبل از AI) است تا
+		// شماره سفارش/قیمت (مثل «۱۲۳۴۵») اشتباهی هذیان تشخیص داده نشود.
+		$mod = $this->moderate_message( $message );
+		if ( false !== $mod ) {
+			$this->log_chat( $session_key, $message, $mod, array( array( 'name' => 'moderation', 'ok' => true ) ) );
+			return rest_ensure_response(
+				array(
+					'reply'    => $mod,
+					'products' => array(),
+					'tools'    => array( array( 'name' => 'moderation', 'ok' => true ) ),
+				)
+			);
 		}
 
 		$history = $request->get_param( 'history' );
